@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Card, Alert } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+  Alert,
+  Badge,
+} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+//import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
@@ -56,89 +66,139 @@ const Dashboard = () => {
   };
 
   const ProductCard = ({ product }) => (
-    <Card className="mb-3 shadow-sm">
-      <Row className="g-0">
-        <Col md={4}>
-          {product.image && (
-            <Card.Img
-              src={`http://localhost:5000${product.image}`}
-              alt={product.title}
-              className="h-100"
-              style={{ objectFit: 'cover' }}
-            />
-          )}
-        </Col>
-        <Col md={8}>
-          <Card.Body>
-            <Card.Title>{product.title}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">
-              {product.category === 'car' ? '🚗 Car' : '🔧 Spare Part'}
-            </Card.Subtitle>
-            <Card.Text>{product.description}</Card.Text>
-
-            <div className="d-flex justify-content-between align-items-center">
-              <span className="h5 text-primary">${product.price}</span>
-
-              <div className="d-flex gap-2">
-                <Button
-                  variant="outline-warning"
-                  size="sm"
-                  onClick={() => navigate(`/UpdateProduct/${product.id}`)}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleDelete(product.id)}
-                >
-                  Delete
-                </Button>
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="mb-3 shadow rounded-4 border-0">
+        <Row className="g-0">
+          <Col md={4}>
+            {product.image && (
+              <Card.Img
+                src={`http://localhost:5000${product.image}`}
+                alt={product.title}
+                className="h-100 rounded-start-4"
+                style={{ objectFit: 'cover' }}
+              />
+            )}
+          </Col>
+          <Col md={8}>
+            <Card.Body>
+              <div className="d-flex justify-content-between align-items-center">
+                <Card.Title className="mb-1">
+                  {product.title}{' '}
+                  <Badge bg="secondary" className="ms-2">
+                    Qty: {product.quantity ?? 'N/A'}
+                  </Badge>
+                </Card.Title>
+                <i
+                  className={`bi ${
+                    product.category === 'car' ? 'bi-car-front' : 'bi-tools'
+                  } fs-4 text-muted`}
+                ></i>
               </div>
-            </div>
-          </Card.Body>
-        </Col>
-      </Row>
-    </Card>
+              <Card.Subtitle className="mb-2 text-muted">
+                {product.brand} • {product.model} • {product.year}
+              </Card.Subtitle>
+              <Card.Text className="small text-secondary">{product.description}</Card.Text>
+
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <span className="h5 text-success">${product.price}</span>
+
+                <div className="d-flex gap-2">
+                  <Button
+                    variant="outline-warning"
+                    size="sm"
+                    onClick={() => navigate(`/UpdateProduct/${product.id}`)}
+                  >
+                    <i className="bi bi-pencil-square me-1"></i> Update
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    <i className="bi bi-trash3 me-1"></i> Delete
+                  </Button>
+                </div>
+              </div>
+            </Card.Body>
+          </Col>
+        </Row>
+      </Card>
+    </motion.div>
   );
 
   return (
     <Container className="py-5">
-      <Row>
-        <Button
-          className="mx-4 mb-4"
-          onClick={() => navigate('/AddProduct')}
-          variant="success"
-        >
-          + Add New Product
-        </Button>
-
-        <Col lg={8}>
-          <Card className="shadow-sm">
-            <Card.Body>
-              <Card.Title className="mb-4">
-                My Products ({products.length})
+      <Row className="mb-4">
+        {/* Quick Actions */}
+        <Col lg={4}>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Card className="shadow rounded-4 border-0 p-3 mb-4">
+              <Card.Title className="mb-3">
+                <i className="bi bi-lightning-charge-fill text-primary me-2"></i>
+                Quick Actions
               </Card.Title>
+              <div className="d-grid gap-3">
+                <Button
+                  variant="primary"
+                  className="d-flex align-items-center gap-2"
+                  onClick={() => navigate('/AddCar')}
+                >
+                  <i className="bi bi-car-front-fill"></i> Add Car
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="d-flex align-items-center gap-2"
+                  onClick={() => navigate('/AddSparepart')}
+                >
+                  <i className="bi bi-gear-fill"></i> Add Spare Part
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
+        </Col>
 
-              {loading && products.length === 0 ? (
-                <div className="text-center py-4">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+        {/* Product List */}
+        <Col lg={8}>
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Card className="shadow rounded-4 border-0 p-3">
+              <Card.Body>
+                <Card.Title className="mb-4 d-flex align-items-center gap-2">
+                  <i className="bi bi-box-seam text-info fs-4"></i>
+                  My Products <Badge bg="info">{products.length}</Badge>
+                </Card.Title>
+
+                {loading && products.length === 0 ? (
+                  <div className="text-center py-4">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
                   </div>
-                </div>
-              ) : error ? (
-                <Alert variant="danger">Error fetching products</Alert>
-              ) : products.length === 0 ? (
-                <Alert variant="info">You haven't added any products yet.</Alert>
-              ) : (
-                <div className="product-list">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              )}
-            </Card.Body>
-          </Card>
+                ) : error ? (
+                  <Alert variant="danger">Error fetching products</Alert>
+                ) : products.length === 0 ? (
+                  <Alert variant="info">You haven't added any products yet.</Alert>
+                ) : (
+                  <div className="product-list">
+                    {products.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
+          </motion.div>
         </Col>
       </Row>
     </Container>
@@ -146,6 +206,156 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+// import React, { useState, useEffect } from 'react';
+// import { Container, Row, Col, Button, Card, Alert } from 'react-bootstrap';
+// import { useNavigate } from 'react-router-dom';
+
+// const Dashboard = () => {
+//   const [products, setProducts] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(false);
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setLoading(true);
+//       try {
+//         const token = localStorage.getItem('token');
+//         const res = await fetch('http://localhost:5000/my-products', {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         });
+
+//         const data = await res.json();
+//         setProducts(data.products || []);
+//       } catch (err) {
+//         setError(true);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, []);
+
+//   const handleDelete = async (productId) => {
+//     const confirm = window.confirm('Are you sure you want to delete this product?');
+//     if (!confirm) return;
+
+//     try {
+//       const token = localStorage.getItem('token');
+//       const res = await fetch(`http://localhost:5000/delete-product/${productId}`, {
+//         method: 'DELETE',
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       if (res.ok) {
+//         setProducts(prev => prev.filter(p => p.id !== productId));
+//       } else {
+//         const data = await res.json();
+//         alert(data.error || 'Failed to delete product');
+//       }
+//     } catch (err) {
+//       alert('An error occurred while deleting the product.');
+//     }
+//   };
+
+//   const ProductCard = ({ product }) => (
+//     <Card className="mb-3 shadow-sm">
+//       <Row className="g-0">
+//         <Col md={4}>
+//           {product.image && (
+//             <Card.Img
+//               src={`http://localhost:5000${product.image}`}
+//               alt={product.title}
+//               className="h-100"
+//               style={{ objectFit: 'cover' }}
+//             />
+//           )}
+//         </Col>
+//         <Col md={8}>
+//           <Card.Body>
+//             <Card.Title>{product.title}</Card.Title>
+//             <Card.Subtitle className="mb-2 text-muted">
+//               {product.category === 'car' ? '🚗 Car' : '🔧 Spare Part'}
+//             </Card.Subtitle>
+//             <Card.Text>{product.description}</Card.Text>
+
+//             <div className="d-flex justify-content-between align-items-center">
+//               <span className="h5 text-primary">${product.price}</span>
+
+//               <div className="d-flex gap-2">
+//                 <Button
+//                   variant="outline-warning"
+//                   size="sm"
+//                   onClick={() => navigate(`/UpdateProduct/${product.id}`)}
+//                 >
+//                   Update
+//                 </Button>
+//                 <Button
+//                   variant="outline-danger"
+//                   size="sm"
+//                   onClick={() => handleDelete(product.id)}
+//                 >
+//                   Delete
+//                 </Button>
+//               </div>
+//             </div>
+//           </Card.Body>
+//         </Col>
+//       </Row>
+//     </Card>
+//   );
+
+//   return (
+//     <Container className="py-5">
+//       <Row>
+//         <Button
+//           className="mx-4 mb-4"
+//           onClick={() => navigate('/AddProduct')}
+//           variant="success"
+//         >
+//           + Add New Product
+//         </Button>
+
+//         <Col lg={8}>
+//           <Card className="shadow-sm">
+//             <Card.Body>
+//               <Card.Title className="mb-4">
+//                 My Products ({products.length})
+//               </Card.Title>
+
+//               {loading && products.length === 0 ? (
+//                 <div className="text-center py-4">
+//                   <div className="spinner-border text-primary" role="status">
+//                     <span className="visually-hidden">Loading...</span>
+//                   </div>
+//                 </div>
+//               ) : error ? (
+//                 <Alert variant="danger">Error fetching products</Alert>
+//               ) : products.length === 0 ? (
+//                 <Alert variant="info">You haven't added any products yet.</Alert>
+//               ) : (
+//                 <div className="product-list">
+//                   {products.map((product) => (
+//                     <ProductCard key={product.id} product={product} />
+//                   ))}
+//                 </div>
+//               )}
+//             </Card.Body>
+//           </Card>
+//         </Col>
+//       </Row>
+//     </Container>
+//   );
+// };
+
+// export default Dashboard;
 
 
 

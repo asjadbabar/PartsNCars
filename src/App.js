@@ -7,10 +7,12 @@ import LandingPage from './components/pages/LandingPage'
 import Login from './components/pages/Login';
 import Signup from './components/pages/Signup';
 import UserDashboard from './components/pages/UserDashboard';
-import Home from './components/pages/Listing';
-import AddProduct from './components/pages/AddProduct';
+import Home from './components/pages/Home';
+//import AddProduct from './components/pages/AddProduct';
 import UpdateProduct from './components/pages/UpdateProduct';
-
+import Cart from './components/pages/CartPage';
+import AddCar from './components/pages/AddCar.js';
+import AddSparepart from './components/pages/AddSparepart';
 const App = () => {
   //const token = localStorage.getItem('token');
 
@@ -22,8 +24,10 @@ const App = () => {
         <Route path="/Signup" element={<Signup />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/UserDashboard" element={<UserDashboard />} />
-        <Route path="/AddProduct" element={<AddProduct />} />
+        <Route path="/AddSparepart" element={<AddSparepart />} />
+        <Route path="/AddCar" element={<AddCar />} />
         <Route path="/UpdateProduct/:id" element={<UpdateProduct />} />
+        <Route path="/Cart" element={<Cart />} />
       </Routes>
       </>
   );
